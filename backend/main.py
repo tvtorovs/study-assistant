@@ -1,5 +1,6 @@
 from sqlmodel import *
 from fastapi import *
+from fastapi.middleware.cors import CORSMiddleware
 import datetime as dt
 from contextlib import asynccontextmanager
 
@@ -37,6 +38,13 @@ async def lifespan(app: FastAPI):
     yield 
 
 app = FastAPI(lifespan=lifespan) 
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # ----------------------------------------------------------------------------------------------
 
