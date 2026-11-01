@@ -51,3 +51,22 @@ def create_session(data: StudyBase, db: Session = Depends(get_session)):
 @app.get("/sessions", response_model=list[StudySession])
 def get_sessions(db: Session = Depends(get_session)):
     return db.exec(select(StudySession)).all()
+
+@app.put("/sessions/{session_id}", response_model=StudySession)
+def update_session(session_id: int, data: StudyBase, db:Session = Depends(get_session)):
+    sess = db.get(StudySession, session_id)
+    if sess is None:
+        raise HTTPException(status_code=404, detail="Session not found")
+    sess.sqlmodel_update(data.model_dump())
+    db.add(sess)
+    db.commit()
+    db.refresh(sess)
+    return sess
+
+@app.delete("/sessions/{session_id}", status_code=204)
+def delete_session(session_id: int, db: Session = Depends(get_session)):
+    sess = db.get(StudySession, session_id)
+    if sess is None:
+        raise HTTPException(status_code=404, detail="Session not found")
+    db.delete(sess)
+    db.commit()
