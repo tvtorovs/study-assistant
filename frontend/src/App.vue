@@ -47,7 +47,7 @@ async function refresh() {
 }
 
 function onSaved() {
-  editing.value - null;
+  editing.value = null;
   refresh();
 }
 
