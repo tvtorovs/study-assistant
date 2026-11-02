@@ -12,7 +12,12 @@ async function request(path, options = {}) {
     return res.json();
 }
 
-export const getSessions = () => request("/sessions");
+export const getSessions = (module = "") => {
+    const query = module ? `?module=${encodeURIComponent(module)}` : "";
+    return request("/sessions" + query);
+};
+
+export const getModules = () => request("/modules");
 
 export const addSession = (session) => request("/sessions", { method: "POST", body: JSON.stringify(session) });
 

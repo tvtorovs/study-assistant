@@ -2,7 +2,7 @@
 import { deleteSession } from "../api.js"
 
 defineProps({ sessions: Array });
-const emit = defineEmits(["deleted"]);
+const emit = defineEmits(["deleted", "edit"]);
 
 async function remove(id) {
     try {
@@ -21,6 +21,7 @@ async function remove(id) {
         <li v-for="s in sessions" :key="s.id">
             <strong>{{ s.module }}</strong>: {{ s.topic }}
             ({{ s.minutes }} min, {{ s.date }})
+            <button @click="emit('edit', s)">Edit</button>
             <button @click="remove(s.id)">Delete</button>
         </li>
     </ul>
