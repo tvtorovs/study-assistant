@@ -17,6 +17,10 @@ class StudyBase(SQLModel):
 class StudySession(StudyBase, table = True):
     id: int | None = Field(default=None, primary_key=True)
 
+class ModuleStats(SQLModel):
+    module: str 
+    hours: float
+
 # ----------------------------------------------------------------------------------------------
 
 # Initialises DB environment
@@ -66,6 +70,12 @@ def get_sessions(module: str | None = None, db: Session = Depends(get_session)):
 @app.get("/modules", response_model=list[str])
 def get_modules(db: Session = Depends(get_session)):
     return db.exec(select(StudySession.module).distinct().order_by(StudySession.module)).all()
+
+@app.get("/stats", response_model=list[ModuleStats])
+def get_stats(db: Session = Depends(get_session)):
+    query = (select(StudySession.module, func.sum(StudySession.minutes)).group_by(StudySession.module).order_by(StudySession.module))
+    rows = db.exec(query).all()
+    return [ModuleStats(module=m, hours=round(total / 60, 2)) for m, total in rows]
 
 @app.put("/sessions/{session_id}", response_model=StudySession)
 def update_session(session_id: int, data: StudyBase, db:Session = Depends(get_session)):
