@@ -73,20 +73,27 @@ watch(selectedModule, loadSessions);
 </script>
 
 <template>
-  <h1>Study Tracker</h1>
+  <main class="app">
+    <h1>Study Tracker</h1>
 
-  <StatsChart :stats="stats" />
+    <section class="stats">
+      <StatsChart :stats="stats" />
+    </section>
 
-  <SessionForm :session="editing" @saved="onSaved" @cancel="editing = null" />
-  
-  <label>
-    Filter:
-    <select v-model="selectedModule">
-      <option value="">All modules</option>
-      <option v-for="m in modules" :key="m" :value="m">{{ m }}</option>
-    </select>
-  </label>
-
-  <h3>Session History:</h3>
-  <SessionList :sessions="sessions" @edit="editing = $event" @deleted="onDeleted" />
+    <div class="add_sessions">
+      <SessionForm :session="editing" @saved="onSaved" @cancel="editing = null" />
+    </div>
+    
+    <section class="sessions">
+      <label>
+        Filter:
+        <select v-model="selectedModule">
+          <option value="">All modules</option>
+          <option v-for="m in modules" :key="m" :value="m">{{ m }}</option>
+        </select>
+      </label>
+      <h3>Session History:</h3>
+      <SessionList :sessions="sessions" @edit="editing = $event" @deleted="onDeleted" />
+    </section>
+  </main>
 </template>
