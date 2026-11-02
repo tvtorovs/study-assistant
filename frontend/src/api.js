@@ -24,3 +24,5 @@ export const addSession = (session) => request("/sessions", { method: "POST", bo
 export const updateSession = (id, session) => request(`/sessions/${id}`, { method: "PUT", body: JSON.stringify(session) });
 
 export const deleteSession = (id) => request(`/sessions/${id}`, { method: "DELETE" });
+
+export const getStats = () => request("/stats");

@@ -1,11 +1,13 @@
 <script setup>
-import { getSessions, getModules } from "./api.js";
+import { getSessions, getModules, getStats } from "./api.js";
 import { ref, watch, onMounted } from "vue";
 import SessionForm from "./components/SessionForm.vue";
 import SessionList from "./components/SessionList.vue";
+import StatsChart from "./components/Stats.vue";
 
 const sessions = ref([]);
 const modules = ref([]);
+const stats = ref([]);
 
 const selectedModule = ref("");
 const editing = ref(null);
@@ -41,9 +43,19 @@ async function loadModules() {
   }
 }
 
+async function loadStats() {
+  try {
+    stats.value = await getStats();
+  }
+  catch (err) {
+    console.error("Failed to load stats: ", err);
+  }
+}
+
 async function refresh() {
   await loadModules();
   await loadSessions();
+  await loadStats();
 }
 
 function onSaved() {
@@ -63,6 +75,8 @@ watch(selectedModule, loadSessions);
 <template>
   <h1>Study Tracker</h1>
 
+  <StatsChart :stats="stats" />
+
   <SessionForm :session="editing" @saved="onSaved" @cancel="editing = null" />
   
   <label>
@@ -73,5 +87,6 @@ watch(selectedModule, loadSessions);
     </select>
   </label>
 
+  <h3>Session History:</h3>
   <SessionList :sessions="sessions" @edit="editing = $event" @deleted="onDeleted" />
 </template>
