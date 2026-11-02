@@ -57,8 +57,15 @@ def create_session(data: StudyBase, db: Session = Depends(get_session)):
     return sess
 
 @app.get("/sessions", response_model=list[StudySession])
-def get_sessions(db: Session = Depends(get_session)):
-    return db.exec(select(StudySession)).all()
+def get_sessions(module: str | None = None, db: Session = Depends(get_session)):
+    query = select(StudySession)
+    if module:
+        query = query.where(StudySession.module == module)
+    return db.exec(query).all()
+
+@app.get("/modules", response_model=list[str])
+def get_modules(db: Session = Depends(get_session)):
+    return db.exec(select(StudySession.module).distinct().order_by(StudySession.module)).all()
 
 @app.put("/sessions/{session_id}", response_model=StudySession)
 def update_session(session_id: int, data: StudyBase, db:Session = Depends(get_session)):
