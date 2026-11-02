@@ -7,11 +7,11 @@ from contextlib import asynccontextmanager
 # ----------------------------------------------------------------------------------------------
 # Collection of all study session attributes
 class StudyBase(SQLModel):
-    module: str
-    topic: str
-    minutes: int
+    module: str = Field(min_length=1, max_length=20)
+    topic: str = Field(min_length=1, max_length=50)
+    minutes: int = Field(gt=0, le=1440)
     date: dt.date = Field(default_factory=dt.date.today)
-    notes: str = ""
+    notes: str = Field(default="", max_length=500)
 
 # DB table of study session and id, such that the id cannot be changed by the client.
 class StudySession(StudyBase, table = True):
