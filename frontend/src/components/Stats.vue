@@ -5,6 +5,8 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, ArcElement, T
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend);
 
+// --------------------------------------------------------------------------------------------------------
+
 const props = defineProps({ stats: { type: Array, default: () => [] }, });
 
 const chartData = computed(() => ({
@@ -49,8 +51,9 @@ function formatTime(hours) {
     const m = totalMin % 60;
     return m === 0 ? `${h} h` : `${h} h ${m} min`;
 }
-
 </script>
+
+// --------------------------------------------------------------------------------------------------------
 
 <template>
     <div class="chart-wrapper">

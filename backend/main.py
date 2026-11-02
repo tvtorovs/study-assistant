@@ -4,7 +4,12 @@ from fastapi.middleware.cors import CORSMiddleware
 import datetime as dt
 from contextlib import asynccontextmanager
 
+# This is the ONLY backend file. It has all the backend logic. 
+
 # ----------------------------------------------------------------------------------------------
+# This section is all the Database models.
+
+
 # Collection of all study session attributes
 class StudyBase(SQLModel):
     module: str = Field(min_length=1, max_length=20)
@@ -17,6 +22,7 @@ class StudyBase(SQLModel):
 class StudySession(StudyBase, table = True):
     id: int | None = Field(default=None, primary_key=True)
 
+#Collection of modules with the total time studied across all sessions.
 class ModuleStats(SQLModel):
     module: str 
     hours: float
@@ -36,6 +42,7 @@ def get_session():
 
 # ----------------------------------------------------------------------------------------------
 
+# no clue what this does i lowkey forgot
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     SQLModel.metadata.create_all(engine)
@@ -43,6 +50,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan) 
 
+# CORS - ensures requests to and from frontend are not blocked by browser. 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173"],
@@ -51,7 +59,9 @@ app.add_middleware(
 )
 
 # ----------------------------------------------------------------------------------------------
+# All endpoints are below
 
+# POST endpoint
 @app.post("/sessions", response_model=StudySession, status_code=201)
 def create_session(data: StudyBase, db: Session = Depends(get_session)):
     sess = StudySession.model_validate(data)
@@ -60,6 +70,7 @@ def create_session(data: StudyBase, db: Session = Depends(get_session)):
     db.refresh(sess)
     return sess
 
+# GET endpoint for sessions
 @app.get("/sessions", response_model=list[StudySession])
 def get_sessions(module: str | None = None, db: Session = Depends(get_session)):
     query = select(StudySession)
@@ -67,16 +78,19 @@ def get_sessions(module: str | None = None, db: Session = Depends(get_session)):
         query = query.where(StudySession.module == module)
     return db.exec(query).all()
 
+# GET endpoint for modules
 @app.get("/modules", response_model=list[str])
 def get_modules(db: Session = Depends(get_session)):
     return db.exec(select(StudySession.module).distinct().order_by(StudySession.module)).all()
 
+# GET endpoint for module stats 
 @app.get("/stats", response_model=list[ModuleStats])
 def get_stats(db: Session = Depends(get_session)):
     query = (select(StudySession.module, func.sum(StudySession.minutes)).group_by(StudySession.module).order_by(StudySession.module))
     rows = db.exec(query).all()
     return [ModuleStats(module=m, hours=round(total / 60, 2)) for m, total in rows]
 
+# UPDATE endpoint
 @app.put("/sessions/{session_id}", response_model=StudySession)
 def update_session(session_id: int, data: StudyBase, db:Session = Depends(get_session)):
     sess = db.get(StudySession, session_id)
@@ -88,6 +102,7 @@ def update_session(session_id: int, data: StudyBase, db:Session = Depends(get_se
     db.refresh(sess)
     return sess
 
+# DEL endpoint
 @app.delete("/sessions/{session_id}", status_code=204)
 def delete_session(session_id: int, db: Session = Depends(get_session)):
     sess = db.get(StudySession, session_id)

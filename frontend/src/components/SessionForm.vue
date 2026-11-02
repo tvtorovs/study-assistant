@@ -2,12 +2,16 @@
 import { ref, watch } from "vue";
 import { addSession, updateSession } from "../api.js";
 
+// --------------------------------------------------------------------------------------------------------
+
 const props = defineProps({session: {type: Object, default: null}, })
 const emit = defineEmits(["saved"]);
 
 const emptyForm = () => ({module: "", topic: "", minutes: 30, notes: ""});
 const form = ref(emptyForm());
 const error = ref("");
+
+// --------------------------------------------------------------------------------------------------------
 
 watch( () => props.session, (s) => { form.value = s ? { ...s } : emptyForm()}, {immediate: true} );
 
@@ -27,6 +31,8 @@ async function submit() {
     }
 }
 </script>
+
+// --------------------------------------------------------------------------------------------------------
 
 <template>
     <form @submit.prevent="submit">

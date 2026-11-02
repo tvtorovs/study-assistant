@@ -5,12 +5,16 @@ import SessionForm from "./components/SessionForm.vue";
 import SessionList from "./components/SessionList.vue";
 import StatsChart from "./components/Stats.vue";
 
+// --------------------------------------------------------------------------------------------------------
+
 const sessions = ref([]);
 const modules = ref([]);
 const stats = ref([]);
 
 const selectedModule = ref("");
 const editing = ref(null);
+
+// --------------------------------------------------------------------------------------------------------
 
 async function logSessions() {
   try {
@@ -68,9 +72,13 @@ function onDeleted() {
   refresh();
 }
 
+// --------------------------------------------------------------------------------------------------------
+
 onMounted(refresh);
 watch(selectedModule, loadSessions);
 </script>
+
+// --------------------------------------------------------------------------------------------------------
 
 <template>
   <main class="app">

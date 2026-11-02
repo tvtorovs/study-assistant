@@ -1,6 +1,8 @@
 <script setup>
 import { deleteSession } from "../api.js"
 
+// --------------------------------------------------------------------------------------------------------
+
 defineProps({ sessions: Array });
 const emit = defineEmits(["deleted", "edit"]);
 
@@ -14,6 +16,8 @@ async function remove(id) {
     }
 }
 </script>
+
+// --------------------------------------------------------------------------------------------------------
 
 <template>
     <p v-if="sessions.length === 0">No sessions yet.</p>
