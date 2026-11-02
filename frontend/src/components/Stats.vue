@@ -18,6 +18,7 @@ const chartData = computed(() => ({
 
 const options = computed(() => ({
     responsive: true,
+    aspectRatio: 2.5,
     plugins: {
         legend: {display: chartType.value === "pie" },
         tooltip: {
@@ -31,7 +32,7 @@ const options = computed(() => ({
          ? {
             y: {
                 beginAtZero: true,
-                ticks: { callback: (value) => formatTime(value) },
+                ticks: { stepSize: 0.5, callback: (value) => formatTime(value) },
             },
          }
          : {},
@@ -67,7 +68,7 @@ function formatTime(hours) {
 
 <style scoped>
 .chart-wrapper {
-    max-width: 600px;
+    max-width: 500px;
 }
 .toggle button.active {
     font-weight: bold;
